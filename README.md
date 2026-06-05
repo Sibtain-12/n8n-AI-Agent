@@ -57,7 +57,7 @@ Before running this project, ensure you have:
 
 ```bash
 git clone <repository-url>
-cd n8n-masterclass-main
+cd n8n-AI-Agent
 ```
 
 ### 2. Install Dependencies
@@ -69,14 +69,13 @@ uv sync
 
 ### 3. Configure n8n Webhook
 
-Update the webhook URL in `app.py` line 47 with your n8n workflow's webhook endpoint:
+Create or update the `.env` file in the project root with your n8n workflow's webhook endpoint:
 
-```python
-response = requests.post(
-    "YOUR_N8N_WEBHOOK_URL",
-    json={"message": user_message}
-)
+```env
+N8N_WEBHOOK_URL="https://your-n8n-instance.app.n8n.cloud/webhook/your-webhook-id"
 ```
+
+The application loads this URL automatically using `python-dotenv` and `os.getenv("N8N_WEBHOOK_URL")` in `app.py`.
 
 ### 4. Set Up Google Credentials
 
@@ -161,4 +160,35 @@ st.session_state.messages  # List of {"role": "user"/"assistant", "content": "..
 ```
 
 This allows the assistant to maintain context across messages within a single session.
+
+## ⚙️ Configuration
+
+### Environment Variables
+
+The project uses environment variables managed via `.env` file (loaded with `python-dotenv`):
+
+| Variable | Description |
+|----------|-------------|
+| `N8N_WEBHOOK_URL` | Your n8n workflow webhook endpoint for processing messages |
+
+### Dependencies
+
+The project requires:
+- `python-dotenv`: For loading environment variables from `.env` file
+- `streamlit`: For building the chat interface
+- `requests`: For sending HTTP requests to the n8n webhook
+
+## 🔄 Data Flow
+
+```
+User Input (Streamlit) → HTTP POST to n8n Webhook
+                ↓
+         n8n AI Agent Routes Request
+                ↓
+     Tool Execution (Google APIs, Web Search)
+                ↓
+    HTTP Response with AI-Generated Output
+                ↓
+    Display Response in Streamlit Chat
+```
 
